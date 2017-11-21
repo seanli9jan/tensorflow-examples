@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+	option='-help'
+else
+	option=$1
+fi
+
+# Change directory
+cd $HOME
+
+if [ $option == '-foreground' ]; then
+	# Run jupyter in the foreground
+	source $HOME/.bashrc && export SHELL=/bin/bash && jupyter notebook --allow-root
+
+elif [ $option == '-background' ]; then
+	# Run jupyter in the background
+	export SHELL=/bin/bash
+	nohup jupyter notebook --allow-root > $HOME/jupyter.log &
+
+elif [ $option == '-password' ]; then
+	# Change jupyter password
+	jupyter notebook password
+
+else
+	option='-help'
+fi
+
+if [ $option == '-help' ]; then
+	echo 'Usage: run_jupyter [options]'
+	echo 'Options:'
+	echo '  -foreground  foreground mode'
+	echo '  -background  background mode'
+	echo '  -password    change password'
+fi
