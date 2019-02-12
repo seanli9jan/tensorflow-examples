@@ -14,7 +14,8 @@ sudo apt-get install \
      curl \
      software-properties-common
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add 
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 
 sudo add-apt-repository \
@@ -37,14 +38,30 @@ sudo apt install docker-ce
 #sudo rm -rf /var/lib/docker
 
 ###
-## Install nvidia-docker
+## Install nvidia-docker (old)
 # Need to install nvidia drivers and docker before install nvidia-docker
 
-sudo apt install nvidia-modprobe
+#sudo apt install nvidia-modprobe
 
 # Install nvidia-docker and nvidia-docker-plugin
-wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
-sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+#wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+#sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+
+# Removing nvidia-docker 1.0
+#docker volume ls -q -f driver=nvidia-docker | \
+#xargs -r -I{} -n1 docker ps -q -a -f volume={} | \
+#xargs -r docker rm -f
+#sudo apt purge nvidia-docker
+
+## Install nvidia-docker
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+  sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/nvidia-docker.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update
+
+sudo apt install nvidia-docker2
+sudo pkill -SIGHUP dockerd
 
 # Test nvidia-smi
 #sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
@@ -58,7 +75,7 @@ sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
 # Download images
 #docker pull tensorflow/tensorflow
 # Download latest gpu images
-docker pull tensorflow/tensorflow:latest-gpu
+#docker pull tensorflow/tensorflow:latest-gpu
 
 # Create container
 #NV_GPU=0 nvidia-docker run -it --hostname docker --name $USER           \
